@@ -71,10 +71,23 @@ const view = {
   appendWrongAnimation(...cards) {
     cards.map(card => {
       card.classList.add('wrong')
-      card.addEventListener('animationend', event => 
+      card.addEventListener('animationend', event =>
         event.target.classList.remove('wrong'), { once: true })
     })
   },
+
+  showGameFinished() {
+    const div = document.createElement('div')
+    div.classList.add('completed')
+    div.innerHTML = `
+      <p>Complete!</p>
+      <p>Score: ${model.score}</p>
+      <p>You've tried: ${model.triedTimes} times</p>
+    `
+    const header = document.querySelector('#header')
+    header.before(div)
+  },
+
 }
 const model = {
   revealedCards: [],
@@ -112,11 +125,11 @@ const controller = {
           setTimeout(this.resetCards, 1000)
           view.pairCards(...model.revealedCards)
           model.revealedCards = []
-          
+
           if (model.score === 260) { // 遊戲結束時的畫面動作
             console.log('showGameFinished')
             this.currentState = GAME_STATE.GameFinished
-            view.showGameFinished()  
+            view.showGameFinished()
             return
           }
           this.currentState = GAME_STATE.FirstCardAwaits
@@ -132,23 +145,11 @@ const controller = {
     console.log('revealedCards', model.revealedCards.map(card => card.dataset.index))
   },
 
-  resetCards(){
-      view.flipCards(...model.revealedCards)
-      model.revealedCards = []
-      controller.currentState = GAME_STATE.FirstCardAwaits
+  resetCards() {
+    view.flipCards(...model.revealedCards)
+    model.revealedCards = []
+    controller.currentState = GAME_STATE.FirstCardAwaits
   },
-
-  showGameFinished() {
-    const div = document.createElement('div')
-    div.classList.add('completed')
-    div.innerHTML = `
-      <p>Complete!</p>
-      <p>Score: ${model.score}</p>
-      <p>You've tried: ${model.triedTimes} times</p>
-    `
-    const header = document.querySelector('#header')
-    header.before(div)
-  }
 
 }
 const utility = {
